@@ -1,0 +1,255 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package Views.laporan;
+
+import static Helpers.Common.monthName;
+import Helpers.DBConnection;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.block.BlockBorder;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.title.TextTitle;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+/**
+ *
+ * @author jessica
+ */
+public class Penjualan extends javax.swing.JInternalFrame {
+    private ChartPanel chartPanel;
+    public Penjualan(){
+        initComponents();
+    }
+    private void setData(){
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        Object[] Baris ={"No","Bulan/Tahun","Jumlah Order","Jumlah Pcs"};
+        DefaultTableModel tabmodel = new DefaultTableModel(null, Baris){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+               return false;
+            }
+        };
+        Connection conn;
+        try {
+            conn = (Connection) new DBConnection().connect();
+            java.sql.Statement stm = conn.createStatement();
+            java.sql.ResultSet sql = stm.executeQuery("select * from vchartpenjualan");
+
+            int no = 1;
+            while(sql.next()){
+                int numBulan = sql.getInt("bulan");
+                int tahun = sql.getInt("tahun");
+                int order = sql.getInt("jmlorder");
+                int pcs = sql.getInt("jmlpcs");
+                String nmbulan = monthName(numBulan);
+
+                dataset.addValue(order, "Order", nmbulan);
+                dataset.addValue(pcs, "Pcs", nmbulan);
+                tabmodel.addRow(new Object[] {no,nmbulan+"/"+tahun,order,pcs});
+                no++;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Penjualan.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        tabPenjualan.setModel(tabmodel);
+        
+    }
+    private static CategoryDataset createDataset() {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        Connection conn;
+        try {
+            conn = (Connection) new DBConnection().connect();
+            java.sql.Statement stm = conn.createStatement();
+            java.sql.ResultSet sql = stm.executeQuery("select * from vchartpenjualan");
+
+            int no = 1;
+            while(sql.next()){
+                int numBulan = sql.getInt("bulan");
+                int order = sql.getInt("jmlorder");
+                int pcs = sql.getInt("jmlpcs");
+                String nmbulan = monthName(numBulan);
+
+                dataset.addValue(order, "Order", nmbulan);
+                dataset.addValue(pcs, "Pcs", nmbulan);
+                no++;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Penjualan.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return dataset;
+    }
+
+    /**
+     * Creates a sample chart.
+     *
+     * @param dataset  the dataset.
+     *
+     * @return The chart.
+     */
+    private static JFreeChart createChart(CategoryDataset dataset) {
+        JFreeChart chart = ChartFactory.createBarChart(
+            "Tanggal", null /* x-axis label*/, 
+                "Penjualan" /* y-axis label */, dataset);
+        chart.addSubtitle(new TextTitle("Data Penjualan Per-Bulan"));
+        chart.setBackgroundPaint(Color.white);
+        CategoryPlot plot = (CategoryPlot) chart.getPlot();
+
+        // ******************************************************************
+        //  More than 150 demo applications are included with the JFreeChart
+        //  Developer Guide...for more information, see:
+        //
+        //  >   http://www.object-refinery.com/jfreechart/guide.html
+        //
+        // ******************************************************************
+
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+        renderer.setDrawBarOutline(false);
+        chart.getLegend().setFrame(BlockBorder.NONE);
+        return chart;
+    }
+
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tabPenjualan = new javax.swing.JTable();
+        jifChart = new javax.swing.JPanel();
+
+        setBorder(null);
+        setMaximizable(true);
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
+                formInternalFrameActivated(evt);
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+        });
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                formComponentResized(evt);
+            }
+        });
+
+        jLabel1.setFont(new java.awt.Font("Lucida Grande", 0, 24)); // NOI18N
+        jLabel1.setText("Laporan Penjualan");
+
+        tabPenjualan.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tabPenjualan);
+
+        jScrollPane2.setViewportView(jScrollPane1);
+
+        javax.swing.GroupLayout jifChartLayout = new javax.swing.GroupLayout(jifChart);
+        jifChart.setLayout(jifChartLayout);
+        jifChartLayout.setHorizontalGroup(
+            jifChartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jifChartLayout.setVerticalGroup(
+            jifChartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 117, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jifChart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jifChart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void formInternalFrameActivated(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameActivated
+        CategoryDataset dataset = createDataset();
+        JFreeChart chart = createChart(dataset);
+        chartPanel = new ChartPanel(chart);
+        chartPanel.setFillZoomRectangle(false);
+        chartPanel.setMouseWheelEnabled(false);
+        int w = jifChart.getWidth();
+        int h = jifChart.getHeight();
+        jifChart.setLayout(new java.awt.BorderLayout());
+        chartPanel.setPreferredSize(new Dimension(w, h));
+        jifChart.add(chartPanel);
+        chartPanel.setSize(new Dimension(w, h));
+//        jifChart.revalidate();
+        setData();
+    }//GEN-LAST:event_formInternalFrameActivated
+
+    private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
+        
+    }//GEN-LAST:event_formComponentResized
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JPanel jifChart;
+    private javax.swing.JTable tabPenjualan;
+    // End of variables declaration//GEN-END:variables
+
+}
